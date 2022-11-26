@@ -3,12 +3,15 @@ import "./Login.css";
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import cookies from 'js-cookie';
+import { useDispatch } from 'react-redux';
+import { loadUserData } from '../redux/actions/user';
 
 const Login = ({ history }) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError(null);
@@ -18,6 +21,7 @@ const Login = ({ history }) => {
       password: password
     })
     .then(res => {
+      dispatch(loadUserData(res.data.user));
       cookies.set('token', res.data.token);
       history.push('/dashboard');
     })

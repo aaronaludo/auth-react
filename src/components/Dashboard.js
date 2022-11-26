@@ -2,14 +2,21 @@ import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import cookies from 'js-cookie';
+import { useSelector } from 'react-redux'
+import { logoutUser } from '../redux/actions/user';
+import { useDispatch } from 'react-redux';
 
 const Dashboard = props => {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+
   useEffect(() => {
-    axios.get(`http://127.0.0.1:8000/api/tasks`, {
+    axios.get(`http://127.0.0.1:8000/api/user`, {
         headers: {
             "Authorization": `Bearer ${cookies.get('token')}`
         }
     }).catch(() => {
+        dispatch(logoutUser());
         cookies.remove('token');
         props.history.push('/login');
     });
@@ -23,6 +30,7 @@ const Dashboard = props => {
             "Authorization": `Bearer ${cookies.get('token')}`
         }
     }).then(() => {
+        dispatch(logoutUser());
         cookies.remove('token');
         props.history.push('/login');
     });
@@ -30,7 +38,8 @@ const Dashboard = props => {
     
   return (
     <>
-      <div>dashboard to guys</div>
+      <div>{user.name}</div>
+      <div>{user.email}</div>  
       <button onClick={logoutHandle}>logout</button>
     </>
   )
